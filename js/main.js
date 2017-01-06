@@ -12,7 +12,9 @@ var i;
 var j;
 var count=0;
 var playerMadeChoice=true;
+var choiceOn=false;
 var strict=false;
+var replaying=false;
 //start function-this finds a random number and pushes it into the compButtons array then plays all items in the compButtons array
 
 function start(){
@@ -29,6 +31,9 @@ function start(){
 
 function reset(){
 strict=false;
+$("span").html("Off");
+choiceOn=false;
+replaying=false;
 compButtons=[];
 userButtons=[];	
 i=0;
@@ -43,15 +48,18 @@ $("#reset").click(function(){
 });
 $("#strict").click(function(){
 	strict=true;
+	$("span").html("On");
 });
 
 //replay function-once i is set to 0 by another function, this will replay all the compButton array values (until i=compButtons.length-1)
 function replay(){
+	replaying=true;
+	choiceOn=false;
 	playerMadeChoice=false;
 	userButtons=[];
 		j=0;
-		console.log("compButtons is "+compButtons);
-		console.log("computer chose "+compButtons[i]);
+		//console.log("compButtons is "+compButtons);
+		//console.log("computer chose "+compButtons[i]);
 		var current=compButtons[i];
 		var idSelector=choices.indexOf(compButtons[i]);
 		console.log("ID selection is "+idSelector);
@@ -61,29 +69,36 @@ function replay(){
 		setTimeout(function() {
 		$(current).css("background-color", colors[idSelector]); 	
 	}, 500);
-		
-	setTimeout(function(){
+	
+		setTimeout(function(){
 	if (i!==compButtons.length-1){
 		i++;
 		replay();	
 	}	
 	else {
+		choiceOn=true;
+		replaying=false;
 		console.log("compButtons is done");
+		setTimeout(function(){
+			console.log("Player has made a choice is "+playerMadeChoice);
+			//if the user does nothing, the game will automatically replay
+			if (playerMadeChoice==false&&userButtons.length<compButtons.length&&replaying==false){
+				if (strict==false){
+				i=0;
+				replay();
+			}
+				else if (strict==true){
+					reset();
+				}
+			}
+			}, 3000);
 	}		
-	}, 1500);
-	//if the user does nothing, the game will automatically replay-this doesn't work yet...
-	/*setTimeout(function() {
-	if (playerMadeChoice==false){
-		i=0;
-		replay();	
-	}	
-	}, 4000);*/
-
+	}, 1000);	
+	
 }
 
  //initiate the simon game with the given process
  	$("#start").click(function(){	 	
- 		console.log("Strict is on "+strict);
 	start();	
 	});
 	//function for the player's response-this will keep the game going
@@ -91,6 +106,7 @@ function replay(){
 		$(".color").click(function(){
 			playerMadeChoice=true;
 			//clicking on color should brighten it
+			if (choiceOn==true){
 			$(this).css("background-color", "white");
 		 var playerChoiceId="#"+$(this).attr("id");
 		 var playerChoice=choices.indexOf(playerChoiceId);
@@ -103,17 +119,17 @@ function replay(){
 		userButtons.push(playerChoiceId);		
 		//compare with the compButton arrays
 		//if correct, increase iterator to continue comparing
-		console.log("j is "+j);
+		/*console.log("j is "+j);
 		console.log("compButtons.length is "+compButtons.length);
 		console.log("user array "+userButtons);
-		console.log("comp array "+compButtons);
+		console.log("comp array "+compButtons);*/
 		if (userButtons[j]===compButtons[j]){
 			j++;
 			if (j==compButtons.length){
 			var temp=$("#count").html();
-			if (temp==3){
+			if (temp==7){
 				setTimeout(function() {
-				$("#count").html("You've won!(Resetting)");	
+				$("#count").html("You've won! Resetting.");	
 				setTimeout(function() {
 					reset();
 				},500);			
@@ -134,7 +150,12 @@ function replay(){
 		//if it's wrong, replay the compButtons array
 		else {
 			var temp=$("#count").html();
-			$("#count").html("Wrong!");
+				if (strict==true){
+					$("#count").html("Wrong! Resetting!");
+				}
+				else {
+				$("#count").html("Wrong!");
+				}
 			setTimeout(function(){
 			$("#count").html(temp);
 			}, 500);
@@ -149,6 +170,7 @@ function replay(){
 			}
 		}, 1500);
 		}
+	}
 	});
 
 

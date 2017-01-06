@@ -103,7 +103,6 @@ display: inline;
 float:right;
 margin-top:1%;
 padding-right: 2.5%;
-
 width: 450px;
 }
 main{
@@ -111,15 +110,33 @@ main{
     text-align: center;
     color:white;
 }
-h1{   
-color: #fff;
+h1{ 
+color: blue;
 background-color: #232323;
-text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #49ff18, 0 0 30px #49ff18, 0 0 40px #49ff18, 0 0 55px #49ff18, 0 0 75px #49ff18
+text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #49ff18, 0 0 30px #49ff18, 0 0 40px #49ff18, 0 0 55px #49ff18, 0 0 75px #49ff18;
+}
+h1:hover{
+    color: white;
 }
 button{
+    font-family: Impact;
     color: black;
+    background-color: yellow;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border: 5px solid blue;
+}
+button:hover{
+  background-color: red;
+  border-color:green;
+}
+#count{
+    font-weight:bold;
+    margin-top: 5px;
 }
 #game-circle{
+    margin-top: 10px;
     display: inline-block;
     width: 400px;
     height:400px;
@@ -129,9 +146,9 @@ button{
     -moz-filter: blur(2px);
     -o-filter: blur(2px);
     -ms-filter: blur(2px);
-    filter: blur(2px);
-       
+    filter: blur(2px);       
 }
+
 .color{
     float:left;
     width: 198px;
