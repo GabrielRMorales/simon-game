@@ -117,7 +117,7 @@ function replay(){
 			j++;
 			if (j==compButtons.length){
 			var temp=$("#count").html();
-			if (temp==7){
+			if (temp==20){
 				setTimeout(function() {
 				$("#count").html("You've won! Resetting.");	
 				setTimeout(function() {
