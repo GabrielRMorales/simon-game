@@ -58,14 +58,11 @@ function replay(){
 	playerMadeChoice=false;
 	userButtons=[];
 		j=0;
-		//console.log("compButtons is "+compButtons);
-		//console.log("computer chose "+compButtons[i]);
 		var current=compButtons[i];
 		var idSelector=choices.indexOf(compButtons[i]);
-		console.log("ID selection is "+idSelector);
+		
 		$(current).css("background-color", "white");
 		beeps[idSelector].play();
-		console.log(colors[idSelector]);
 		setTimeout(function() {
 		$(current).css("background-color", colors[idSelector]); 	
 	}, 500);
@@ -78,9 +75,7 @@ function replay(){
 	else {
 		choiceOn=true;
 		replaying=false;
-		console.log("compButtons is done");
 		setTimeout(function(){
-			console.log("Player has made a choice is "+playerMadeChoice);
 			//if the user does nothing, the game will automatically replay
 			if (playerMadeChoice==false&&userButtons.length<compButtons.length&&replaying==false){
 				if (strict==false){
@@ -115,14 +110,9 @@ function replay(){
 		$(playerChoiceId).css("background-color", colors[playerChoice]); 
 	}, 500)
 		//push choice into userButton arrays
-		console.log("user chose "+playerChoiceId);
 		userButtons.push(playerChoiceId);		
 		//compare with the compButton arrays
 		//if correct, increase iterator to continue comparing
-		/*console.log("j is "+j);
-		console.log("compButtons.length is "+compButtons.length);
-		console.log("user array "+userButtons);
-		console.log("comp array "+compButtons);*/
 		if (userButtons[j]===compButtons[j]){
 			j++;
 			if (j==compButtons.length){
@@ -172,7 +162,5 @@ function replay(){
 		}
 	}
 	});
-
-
 });
  
