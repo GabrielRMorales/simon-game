@@ -1,20 +1,12 @@
 $(document).ready(function(){
-var buttonBeepOne=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
-var buttonBeepTwo=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
-var buttonBeepThree=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
-var buttonBeepFour=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
-var beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree, buttonBeepFour];
-var choices=["#top-left","#top-right","#bottom-left","#bottom-right"];
-var colors=["blue","green","red","yellow"];
-var compButtons=[];
-var userButtons=[];	
-var i;
-var j;
-var count=0;
-var playerMadeChoice=true;
-var choiceOn=false;
-var strict=false;
-var replaying=false;
+var buttonBeepOne=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3"),
+    buttonBeepTwo=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3"),
+    buttonBeepThree=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3"),
+    buttonBeepFour=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3"),
+    beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree, buttonBeepFour],
+    choices=["#top-left","#top-right","#bottom-left","#bottom-right"],
+    colors=["blue","green","red","yellow"],
+    compButtons=[], userButtons=[], i, j, count=0,playerMadeChoice=true, choiceOn=false, strict=false, replaying=false;
 //start function-this finds a random number and pushes it into the compButtons array then plays all items in the compButtons array
 
 function start(){
