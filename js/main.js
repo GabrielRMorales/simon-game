@@ -1,166 +1,174 @@
-$(document).ready(function(){
+//make sure functions are pure 
+//can code additional methods to incorporate via Object.assign
+//ex: checkVictory, checkAccuracy
+const simonGame = ()=>{
+    let simonMoves =[];
+    let userMoves = [];
+    let isUserTurn = false;
+    let round = 0;
+
+    return {
+        simonMoves,
+        userMoves,
+        round,
+        isUserTurn
+    };
+}
+
+const currentGame = simonGame();
+
+//needs to check if X turns has passed
+const roundCount = ()=>{
+    currentGame.round +=1;
+}
+
+//Upon user clicking start button, randomly select 3 colors and set these as simonMoves
+//addColors function
+const addColors = ()=>{
+    const colors = ["green","blue","red","yellow"];
+    let random=Math.floor(Math.random()*4);
+    currentGame.simonMoves.push(colors[random]);
+    roundCount();
+    
+}
+
+//playLight function
+const playLight = (lightColor, col="white")=>{
+   // let lightEl = document.getElementById(lightColor);
+    //add light up class for 1 second
+    $(`#${lightColor}`).css("background-color", col);
+}
+
+const playSound = (colInd)=>{
 var buttonBeepOne=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
 var buttonBeepTwo=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
 var buttonBeepThree=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
 var buttonBeepFour=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
-var beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree, buttonBeepFour];
-var choices=["#top-left","#top-right","#bottom-left","#bottom-right"];
-var colors=["blue","green","red","yellow"];
-var compButtons=[];
-var userButtons=[];	
-var i;
-var j;
-var count=0;
-var playerMadeChoice=true;
-var choiceOn=false;
-var strict=false;
-var replaying=false;
-//start function-this finds a random number and pushes it into the compButtons array then plays all items in the compButtons array
-
-function start(){
-	 	count++;
-  	$("#count").html(count);
-		i=0;
-		var random=Math.ceil(Math.random() * (4)-1);
-		var computerId=(choices[random]);
-		compButtons.push(computerId);
-		setTimeout(function(){
-			replay();	
-		},1000);		
+const beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree, buttonBeepFour];
+beeps[colInd].play();
 }
 
-function reset(){
-strict=false;
-$("span").html("Off");
-choiceOn=false;
-replaying=false;
-compButtons=[];
-userButtons=[];	
-i=0;
-j=0;
-count=0;
-playerMadeChoice=true;
-$("#count").html("0"+count);
+//playPattern-needs its own function
+//should be done with setTimeouts, one light flash/second. Use promises if necessary
+const playPattern = (arr=currentGame.simonMoves) => {
+    //always reset userMoves each turn
+    currentGame.userMoves=[];
+    //an async await function is another option
+    //or potentially just a for loop 
+    let completed = arr.reduce((acc, curr)=>{
+        return acc.then(function(){
+          //refactor
+            return new Promise (function(resolve){
+                setTimeout(function(){
+                    playLight(curr);
+                    playSound(arr.indexOf(curr));
+                    console.log("now it's wite");
+                    resolve();
+                }, 1000);
+                console.log("this should fire");
+            }).then(function(){
+                return new Promise(function(resolve){
+                    setTimeout(function(){
+                        playLight(curr, curr);
+                        resolve();
+                    }, 1000);
+                });
+            });
+            /*return new Promise(function(resolve){
+                    //playLight
+                    playLight(curr);
+                    //playSound
+                setTimeout(function(){
+                    //remove light class
+                    playLight(curr, curr);
+                    console.log(curr);
+                    resolve();
+                }, 1000);
+            });    */
+            
+            
+        })
+    }, Promise.resolve());
+    //once the loop is finished, set isUsersTurn to true
+    completed.then(function(){
+        currentGame.isUserTurn = true;
+    });      
 }
 
-$("#reset").click(function(){
-	reset();
-});
-$("#strict").click(function(){
-	strict=true;
-	$("span").html("On");
-});
+//comparePatterns function
+const comparePatterns = ()=>{
+    let wrongIndex;
+    let sameMoves = currentGame.simonMoves.every(function(el, index){
+        //get wrong index here
+        if (el!==currentGame.userMoves[index]){
+            wrongIndex=index;
+            return false;
+        }
+            return true;
+    });
+    if (sameMoves === true) {
+        //check if game is over
+        if (currentGame.round===6){
+            console.log("User wins!");
+        }
+        //continueGame functions
+        addColors();
+        playPattern();
+    }
+    else {
 
-//replay function-once i is set to 0 by another function, this will replay all the compButton array values (until i=compButtons.length-1)
-function replay(){
-	replaying=true;
-	choiceOn=false;
-	playerMadeChoice=false;
-	userButtons=[];
-		j=0;
-		var current=compButtons[i];
-		var idSelector=choices.indexOf(compButtons[i]);
-		
-		$(current).css("background-color", "white");
-		beeps[idSelector].play();
-		setTimeout(function() {
-		$(current).css("background-color", colors[idSelector]); 	
-	}, 500);
-	
-		setTimeout(function(){
-	if (i!==compButtons.length-1){
-		i++;
-		replay();	
-	}	
-	else {
-		choiceOn=true;
-		replaying=false;
-		setTimeout(function(){
-			//if the user does nothing, the game will automatically replay
-			if (playerMadeChoice==false&&userButtons.length<compButtons.length&&replaying==false){
-				if (strict==false){
-				i=0;
-				replay();
-			}
-				else if (strict==true){
-					reset();
-				}
-			}
-			}, 3000);
-	}		
-	}, 1000);	
-	
+        //if strict mode-start over and invoke an initialize function
+
+        //else ifnormal mode-replay colors
+        let replayColors=currentGame.simonMoves.slice(wrongIndex);
+        playPattern(replayColors);
+    }
+
+}
+   
+
+//setEventListeners for buttons-upon click, if it's the usersTurn, add them to the userMoves array
+//once userMoves.length is same as simonMoves, set isUsersTurn to false and compare patterns
+
+const addUserControls = ()=>{
+
+    let lights = document.querySelectorAll(".game-light");
+    lights.forEach(btn=>{
+        btn.addEventListener("click",function(){
+            if (currentGame.isUserTurn===true){
+                currentGame.userMoves.push(this.id);
+                //should blink and play sound
+                console.log(currentGame.userMoves);
+                if (currentGame.userMoves.length === currentGame.simonMoves.length){
+                    currentGame.isUserTurn = false;
+                    comparePatterns();
+                }
+            }
+        });
+    });
+
+    //add StrictMode
+    
 }
 
- //initiate the simon game with the given process
- 	$("#start").click(function(){	 	
-	start();	
-	});
-	//function for the player's response-this will keep the game going
+//invocation of functions-make an initialize function
 
-		$(".color").click(function(){
-			playerMadeChoice=true;
-			//clicking on color should brighten it
-			if (choiceOn==true){
-			$(this).css("background-color", "white");
-		 var playerChoiceId="#"+$(this).attr("id");
-		 var playerChoice=choices.indexOf(playerChoiceId);
-		beeps[playerChoice].play();
-		setTimeout(function() {
-		$(playerChoiceId).css("background-color", colors[playerChoice]); 
-	}, 500)
-		//push choice into userButton arrays
-		userButtons.push(playerChoiceId);		
-		//compare with the compButton arrays
-		//if correct, increase iterator to continue comparing
-		if (userButtons[j]===compButtons[j]){
-			j++;
-			if (j==compButtons.length){
-			var temp=$("#count").html();
-			if (temp==20){
-				setTimeout(function() {
-				$("#count").html("You've won! Resetting.");	
-				setTimeout(function() {
-					reset();
-				},500);			
-			},1000);
-				
-			}
-			else{
-			$("#count").html("Correct!");
-			setTimeout(function(){
-			$("#count").html(temp);
-			}, 500);
-				setTimeout(function() {
-				start();
-				}, 1500);
-			}
-		}
-	}
-		//if it's wrong, replay the compButtons array
-		else {
-			var temp=$("#count").html();
-				if (strict==true){
-					$("#count").html("Wrong! Resetting!");
-				}
-				else {
-				$("#count").html("Wrong!");
-				}
-			setTimeout(function(){
-			$("#count").html(temp);
-			}, 500);
-			setTimeout(function() {
-			if (strict==false){
-			i=0;
-			replay();
-			}
-			else if (strict==true){
-				reset();
-				start();
-			}
-		}, 1500);
-		}
-	}
-	});
-});
- 
+const initialize = ()=>{
+    //const currentGame = simonGamePiece();--do this here
+    addUserControls();
+    addColors();
+    playPattern(currentGame.simonMoves);
+    
+}
+    
+//add StartGame to invoke initialize
+let startButton = document.getElementById("start");
+startButton.addEventListener("click", initialize);
+//make a continueGame function to be used between turns
+
+
+//addStrictMode later
+//for these, they don't need to be based on if statements
+//it can also be changing a function defintion upon click-though this would conflict
+//with const and how would the old function definition be returned? Maybe use Simon Game 
+// strict method vs non-strict methods
