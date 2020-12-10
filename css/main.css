@@ -1,25 +1,79 @@
 body {
-    margin: 15% auto;
+    margin: 0 auto;
     text-align: center;
     background-color: teal;
 }
 
 div {
     display: inline-block;
-    height: 100px;
-    width: 100px;
+    height: 170px;
+    width: 170px;
 }
 
+#game {
+    margin: auto;
+    text-align: center;
+    display: block;
+    border-radius: 50%;
+    height: 400px;
+    width: 400px;
+    background-color: black;
+    position: relative;
+}
+#lights {
+    position: absolute;
+    top: 6.25%;
+    left: 6.25%;
+    right: 6.25%;
+    bottom: 6.25%;
+    height: 350px;
+    width: 350px;
+}
+#controls {
+    position: absolute;
+    top: 31%;
+    left: 31%;
+    height: 150px;
+    width: 150px;
+    border-radius: 100%;
+    text-align: center;
+    background-color: black;
+}
+#start {
+    margin-top: 17%;
+}
+button {
+    margin: 0 auto;
+    display: block;
+    width: 75px;
+}
 #green {
+    border-top-left-radius: 100%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
     background-color: green;
+    margin-right:5px;
 }
-#yellow {
-    background-color: yellow;
-}
-
 #red {
+    border-top-left-radius: 0;
+    border-top-right-radius: 100%;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
     background-color: red;
 }
 #blue {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 100%;
     background-color: blue;
+}
+#yellow {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 100%;
+    border-bottom-left-radius: 0;
+    background-color: yellow;
+    margin-left: 5px;
 }

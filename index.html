@@ -4,17 +4,16 @@
     <title>SIMON GAME</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./css/main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     </head>
     <body>
     <h1>Simon Game</h1>
-    <div class="game-light" id="green"></div>
-    <div class="game-light" id="red"></div>
-    <div class="game-light" id="blue"></div>
-    <div class="game-light" id="yellow"></div>
-    <button id="start">Start</button>
-    <button id="strict-on">Strict Mode On</button>
-    <button id="strict-off">Strict Mode Off</button>
+    <div id="game"><div id="lights"><div class="game-light" id="green"></div><div class="game-light" id="red"></div><div class="game-light" id="blue"></div><div class="game-light" id="yellow"></div></div>
+    <div id="controls"><button id="start">Start</button>
+        <button id="strict-on">Strict Mode On</button>
+        <button id="strict-off">Strict Mode Off</button></div>
+   </div>
+    
     <script src="./js/main.js"></script>
 
     </body>

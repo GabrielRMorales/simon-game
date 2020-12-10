@@ -34,9 +34,9 @@ const addColors = ()=>{
 
 //playLight function
 const playLight = (lightColor, col="white")=>{
-   // let lightEl = document.getElementById(lightColor);
+   let lightEl = document.getElementById(lightColor);
     //add light up class for 1 second
-    $(`#${lightColor}`).css("background-color", col);
+    lightEl.style.backgroundColor = col;
 }
 
 const playSound = (colInd)=>{
