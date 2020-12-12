@@ -6,15 +6,19 @@ const simonGame = ()=>{
     let userMoves = [];
     let isUserTurn = false;
     let round = 0;
+    let strict=false;
+    const colors = ["green","blue","red","yellow"];
 
     return {
         simonMoves,
         userMoves,
         round,
-        isUserTurn
+        isUserTurn,
+        colors,
+        strict
     };
 }
-
+const roundNumberToWin=5;
 const currentGame = simonGame();
 
 //needs to check if X turns has passed
@@ -25,9 +29,9 @@ const roundCount = ()=>{
 //Upon user clicking start button, randomly select 3 colors and set these as simonMoves
 //addColors function
 const addColors = ()=>{
-    const colors = ["green","blue","red","yellow"];
+    
     let random=Math.floor(Math.random()*4);
-    currentGame.simonMoves.push(colors[random]);
+    currentGame.simonMoves.push(currentGame.colors[random]);
     roundCount();
     
 }
@@ -39,13 +43,13 @@ const playLight = (lightColor, col="white")=>{
     lightEl.style.backgroundColor = col;
 }
 
-const playSound = (colInd)=>{
-var buttonBeepOne=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
-var buttonBeepTwo=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
-var buttonBeepThree=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
-var buttonBeepFour=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
-const beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree, buttonBeepFour];
-beeps[colInd].play();
+const playSound=(colInd)=>{
+    var buttonBeepOne=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound1.mp3");
+    var buttonBeepTwo=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound2.mp3");
+    var buttonBeepThree=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound3.mp3");
+    var buttonBeepFour=new Audio("https://s3.amazonaws.com/freecodecamp/simonSound4.mp3");
+    const beeps=[buttonBeepOne,buttonBeepTwo,buttonBeepThree,buttonBeepFour];
+    beeps[colInd].play();
 }
 
 //playPattern-needs its own function
@@ -61,17 +65,17 @@ const playPattern = (arr=currentGame.simonMoves) => {
             return new Promise (function(resolve){
                 setTimeout(function(){
                     playLight(curr);
-                    playSound(arr.indexOf(curr));
-                    console.log("now it's wite");
+                    playSound(currentGame.colors.indexOf(curr));
+                   // console.log("now it's wite");
                     resolve();
                 }, 1000);
-                console.log("this should fire");
+               // console.log("this should fire");
             }).then(function(){
                 return new Promise(function(resolve){
                     setTimeout(function(){
                         playLight(curr, curr);
                         resolve();
-                    }, 1000);
+                    }, 500);
                 });
             });
             /*return new Promise(function(resolve){
@@ -108,8 +112,13 @@ const comparePatterns = ()=>{
     });
     if (sameMoves === true) {
         //check if game is over
-        if (currentGame.round===6){
-            console.log("User wins!");
+
+        if (currentGame.round===roundNumberToWin){
+            let victoryMessage = document.createElement("h1");
+            victoryMessage.innerHTML="User Wins!"
+            let target = document.querySelector("h1");
+            target.after(victoryMessage);
+            //reset game after a short delay
         }
         //continueGame functions
         addColors();
@@ -118,10 +127,19 @@ const comparePatterns = ()=>{
     else {
 
         //if strict mode-start over and invoke an initialize function
+        if (!!currentGame.strict) {
+            currentGame.simonMoves=[];
+            console.log(currentGame.userMoves);
+            addColors();
+            playPattern();
+        }
 
-        //else ifnormal mode-replay colors
-        let replayColors=currentGame.simonMoves.slice(wrongIndex);
-        playPattern(replayColors);
+        //else if normal mode-replay colors
+        else {
+            let replayColors=currentGame.simonMoves.slice(wrongIndex);
+            playPattern(replayColors);
+        }
+        
     }
 
 }
@@ -136,18 +154,42 @@ const addUserControls = ()=>{
     lights.forEach(btn=>{
         btn.addEventListener("click",function(){
             if (currentGame.isUserTurn===true){
-                currentGame.userMoves.push(this.id);
+                let currentColor=this.id;
+                currentGame.userMoves.push(currentColor);
                 //should blink and play sound
-                console.log(currentGame.userMoves);
-                if (currentGame.userMoves.length === currentGame.simonMoves.length){
-                    currentGame.isUserTurn = false;
-                    comparePatterns();
-                }
+                
+                new Promise(function(resolve){
+                          setTimeout(function(){
+                              playLight(currentColor);
+                              playSound(currentGame.colors.indexOf(currentColor));
+                              resolve();
+                          }, 250);
+                      }).then(function(){
+                          return new Promise(function(resolve){
+                              setTimeout(function(){
+                                  playLight(currentColor, currentColor);
+                                  resolve();
+                              }, 750);
+                          });
+                      }).then(function(){
+                        if (currentGame.userMoves.length === currentGame.simonMoves.length){
+                            currentGame.isUserTurn = false;
+                            comparePatterns();
+                        }
+                      }).catch(function(err){
+                          console.log(err);
+                      }); 
             }
         });
     });
 
     //add StrictMode
+    document.getElementById("strict-on").addEventListener("click", function(){
+        currentGame.strict=true;
+    });
+    document.getElementById("strict-off").addEventListener("click", function(){
+        currentGame.strict=false;
+    });
     
 }
 
